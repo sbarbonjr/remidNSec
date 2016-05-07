@@ -28,10 +28,11 @@ ajustarPorTempo = function(x, y, assinaturas.min){
 
 ### Organizando pelo tempo
 for(i in 1:assinaturas.qtd){
-#for(i in 1:5){
   print(paste(i,assinaturas.qtd,sep = "/"))
   assinaturas.min.signal[i,] = ajustarPorTempo(as.numeric(dataset$signature==assinaturas[i]), dataset, assinaturas.min)
 }
+
+write.table(file="assinaturasTempo.csv", x=assinaturas.min.signal)
 
 ### Binning Sylvio
 for(i in 1:assinaturas.qtd){
@@ -63,6 +64,11 @@ for(pagina in 1:round((assinaturas.qtd*2)/16)){
 }
 
 
+options(save.defaults = list(ascii = TRUE, safe = FALSE))
+save.image(file = "mem.RData")
+unlink(".RData")
+
+
 #aux = 1
 #for(pagina in 1:round(assinaturas.qtd/16)){
 #   png(file=paste(paste("resultados/alerts_",pagina),".png"), bg="white", width = 1500, height = 1024)
@@ -76,6 +82,3 @@ for(pagina in 1:round((assinaturas.qtd*2)/16)){
 #   dev.off()
 #   aux = aux + 16;
 # }
-
-
-

@@ -2,6 +2,8 @@ library(foreign)
 library(arules)
 
 dataset = read.csv(file = "base/AlertasICTF08.csv")
+aux = read.table(file = "aux.csv", header = FALSE)
+
 dataset = dataset[1:(nrow(dataset)/4),]
 
 resolucao = 16 
@@ -26,13 +28,16 @@ ajustarPorTempo = function(x, y, assinaturas.min){
   return(saida)
 }
 
+
 ### Organizando pelo tempo
-for(i in 1:assinaturas.qtd){
+for(i in as.numeric(aux):assinaturas.qtd){
   print(paste(i,assinaturas.qtd,sep = "/"))
   assinaturas.min.signal[i,] = ajustarPorTempo(as.numeric(dataset$signature==assinaturas[i]), dataset, assinaturas.min)
+  write.table(file = "aux.csv", x = (i+1),append = FALSE, col.names = F, row.names = F)
+  write.table(file="assinaturasTempo.csv", x=t(assinaturas.min.signal[i,]), row.names=c(as.character(i)), 
+              sep=",",append = TRUE, col.names = F , quote = c(1), eol = "\n", na = "0", dec = "0")
 }
 
-write.table(file="assinaturasTempo.csv", x=assinaturas.min.signal)
 
 ### Binning Sylvio
 for(i in 1:assinaturas.qtd){

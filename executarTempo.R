@@ -19,9 +19,9 @@ for(i in (1:nrow(dataset))){
   #problema na 97541
   tryCatch(
     {
-      print(strftime(dataset[i,1], "%d %H:%M"))
+      #print(strftime(dataset[i,1], "%d %H:%M"))
       assinaturas.min = rbind(assinaturas.min, strftime(dataset[i,1], "%d %H:%M"))
-      print(i)
+      #print(i)
     }, error = function(e){print(i)}
   )
 }

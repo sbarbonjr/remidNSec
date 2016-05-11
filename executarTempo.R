@@ -1,18 +1,37 @@
 library(foreign)
 library(arules)
 
+source("binning.R")
+
 dataset = read.csv(file = "base/AlertasICTF08.csv")
 aux = read.table(file = "aux.csv", header = FALSE)
+#dataset = dataset[1:(nrow(dataset)/4),]
 
-dataset = dataset[1:(nrow(dataset)/4),]
-
-resolucao = 16 
+resolucao = 128 
 
 assinaturas.qtd = length(unique(dataset$signature))
 assinaturas = unique(dataset$signature)
 
-assinaturas.min = unique(strftime(dataset$timestamp, "%d %H:%M"))
-assinaturas.min.qtd = length(unique(strftime(dataset$timestamp, "%d %H:%M")))
+#assinaturas.min = unique(strftime(dataset$timestamp, "%d %H:%M"))
+assinaturas.min = data.frame(Timestamp=character(8), stringsAsFactors = FALSE)
+#for(i in (1:nrow(dataset))){
+for(i in 1:15){
+  #problema na 97541
+  tryCatch(
+    {
+      print(strftime(dataset[i,1], "%d %H:%M"))
+      assinaturas.min = rbind(assinaturas.min, strftime(dataset[i,1], "%d %H:%M"))
+      print(i)
+    }, error = function(e){print(i)}
+  )
+}
+
+
+printf("Tempo das assinaturas encerrado")
+
+#assinaturas.min = unique(strftime(dataset$timestamp, "%d %H:%M"))
+assinaturas.min = unique(assinaturas.min)
+assinaturas.min.qtd = nrow(assinaturas.min)
 
 assinaturas.min.signal = matrix(nrow=assinaturas.qtd, ncol = assinaturas.min.qtd)
 assinaturas.signal = matrix(nrow=assinaturas.qtd, ncol = resolucao)
@@ -72,18 +91,3 @@ for(pagina in 1:round((assinaturas.qtd*2)/16)){
 options(save.defaults = list(ascii = TRUE, safe = FALSE))
 save.image(file = "mem.RData")
 unlink(".RData")
-
-
-#aux = 1
-#for(pagina in 1:round(assinaturas.qtd/16)){
-#   png(file=paste(paste("resultados/alerts_",pagina),".png"), bg="white", width = 1500, height = 1024)
-#   par(mfrow=c(4,4))
-#   for(i in aux:(aux+15)){
-#     plot(assinaturas.signal[i,], type="l", xlab = assinaturas[i], ylab = "Alerts",
-#          cex.main=2, cex.lab=2,cex.axis=2)
-#     
-#     #rect(1, 5, 3, 7, col="white")
-#   }
-#   dev.off()
-#   aux = aux + 16;
-# }

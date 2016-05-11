@@ -14,8 +14,8 @@ assinaturas = unique(dataset$signature)
 
 #assinaturas.min = unique(strftime(dataset$timestamp, "%d %H:%M"))
 assinaturas.min = data.frame(Timestamp=character(8), stringsAsFactors = FALSE)
-#for(i in (1:nrow(dataset))){
-for(i in 1:15){
+for(i in (1:nrow(dataset))){
+#for(i in 1:15){
   #problema na 97541
   tryCatch(
     {
@@ -27,7 +27,7 @@ for(i in 1:15){
 }
 
 
-printf("Tempo das assinaturas encerrado")
+print("Tempo das assinaturas encerrado")
 
 #assinaturas.min = unique(strftime(dataset$timestamp, "%d %H:%M"))
 assinaturas.min = unique(assinaturas.min)

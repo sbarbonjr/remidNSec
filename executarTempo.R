@@ -14,20 +14,22 @@ assinaturas = unique(dataset$signature)
 
 #assinaturas.min = unique(strftime(dataset$timestamp, "%d %H:%M"))
 assinaturas.min = data.frame(Timestamp=character(8), stringsAsFactors = FALSE)
-#for(i in (1:nrow(dataset))){
-for(i in 1:15){
-  #problema na 97541
+for(i in (1:nrow(dataset))){
+#for(i in 1:15){
+  #problema na 97540 e 165962
   tryCatch(
     {
       print(strftime(dataset[i,1], "%d %H:%M"))
       assinaturas.min = rbind(assinaturas.min, strftime(dataset[i,1], "%d %H:%M"))
       print(i)
-    }, error = function(e){print(i)}
+    }, error = function(e){
+      dataset = dataset[-i,] 
+      print(paste("Removido a instancia ",i,sep = " "))
+      }
   )
 }
 
-
-printf("Tempo das assinaturas encerrado")
+print("Tempo das assinaturas encerrado")
 
 #assinaturas.min = unique(strftime(dataset$timestamp, "%d %H:%M"))
 assinaturas.min = unique(assinaturas.min)
@@ -38,7 +40,7 @@ assinaturas.signal = matrix(nrow=assinaturas.qtd, ncol = resolucao)
 
 ### Binning Sylvio
 ajustarPorTempo = function(x, y, assinaturas.min){
-  comprimento = length(assinaturas.min)
+  comprimento = nrow(assinaturas.min)
   saida = vector(length=comprimento)
   passo = trunc(length(x)/comprimento)
   for(i in 1:comprimento){

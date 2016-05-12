@@ -19,12 +19,12 @@ for(i in (1:nrow(dataset))){
   #problema na 97540 e 165962
   tryCatch(
     {
-      print(strftime(dataset[i,1], "%d %H:%M"))
+      #print(strftime(dataset[i,1], "%d %H:%M"))
       assinaturas.min = rbind(assinaturas.min, strftime(dataset[i,1], "%d %H:%M"))
       print(i)
     }, error = function(e){
       dataset = dataset[-i,] 
-      print(paste("Removido a instancia ",i,sep = " "))
+      print(paste("Removida a instancia ",i,sep = " "))
       }
   )
 }

@@ -4,8 +4,8 @@ library(arules)
 source("binning.R")
 
 #dataset = read.csv(file = "base/AlertasICTF08.csv")
-#dataset = read.csv(file = "base/AlertasICTF08-3.csv", sep = ";")
-dataset = read.csv(file = "base/AlertasICTF08-selecionado - ENOFLAG.csv", sep = ";")
+dataset = read.csv(file = "base/AlertasICTF08-3.csv", sep = ";")
+#dataset = read.csv(file = "base/AlertasICTF08-selecionado - ENOFLAG.csv", sep = ";")
 
 #aux = read.table(file = "aux.csv", header = FALSE)
 aux=1

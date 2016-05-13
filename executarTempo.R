@@ -3,7 +3,9 @@ library(arules)
 
 source("binning.R")
 
-dataset = read.csv(file = "base/AlertasICTF08.csv")
+#dataset = read.csv(file = "base/AlertasICTF08.csv")
+dataset = read.csv(file = "base/AlertasICTF08-3.csv", sep = ";")
+
 aux = read.table(file = "aux.csv", header = FALSE)
 #dataset = dataset[1:(nrow(dataset)/4),]
 
@@ -21,7 +23,7 @@ for(i in (1:nrow(dataset))){
     {
       #print(strftime(dataset[i,1], "%d %H:%M"))
       assinaturas.min = rbind(assinaturas.min, strftime(dataset[i,1], "%d %H:%M"))
-      print(i)
+      #print(i)
     }, error = function(e){
       dataset = dataset[-i,] 
       print(paste("Removida a instancia ",i,sep = " "))
@@ -33,22 +35,11 @@ print("Tempo das assinaturas encerrado")
 
 #assinaturas.min = unique(strftime(dataset$timestamp, "%d %H:%M"))
 assinaturas.min = unique(assinaturas.min)
-assinaturas.min.qtd = nrow(assinaturas.min)
+assinaturas.min = assinaturas.min[-1,]
+assinaturas.min.qtd = length(assinaturas.min)
 
 assinaturas.min.signal = matrix(nrow=assinaturas.qtd, ncol = assinaturas.min.qtd)
 assinaturas.signal = matrix(nrow=assinaturas.qtd, ncol = resolucao)
-
-### Binning Sylvio
-ajustarPorTempo = function(x, y, assinaturas.min){
-  comprimento = nrow(assinaturas.min)
-  saida = vector(length=comprimento)
-  passo = trunc(length(x)/comprimento)
-  for(i in 1:comprimento){
-    saida[i] = sum(x[strftime(dataset$timestamp, "%d %H:%M")==assinaturas.min[i]] )
-  }
-  return(saida)
-}
-
 
 ### Organizando pelo tempo
 for(i in as.numeric(aux):assinaturas.qtd){
@@ -60,6 +51,8 @@ for(i in as.numeric(aux):assinaturas.qtd){
 }
 
 
+
+
 ### Binning Sylvio
 for(i in 1:assinaturas.qtd){
   assinaturas.signal[i,] = binning(assinaturas.min.signal[i,], resolucao)
@@ -67,26 +60,42 @@ for(i in 1:assinaturas.qtd){
 
 ### Plot só binning sylvio
 aux = 1
-for(pagina in 1:round((assinaturas.qtd*2)/16)){
+paginaFinal = trunc((assinaturas.qtd*2)/16)
+for(pagina in 1:paginaFinal){
   png(file=paste(paste("resultados/alerts_",pagina),".png"), bg="white", width = 1500, height = 1024)
   par(mfrow=c(4,4))
-  for(i in aux:(aux+15)){
-    
-    x = assinaturas.signal[i,]
-    
-    #binning Sylvio
-    plot(x, type="l", xlab = assinaturas[i], ylab = "Alerts",
+  if(pagina == paginaFinal){
+    print("pagina final")
+    for(i in aux:assinaturas.qtd){
+      x = assinaturas.signal[i,]
+      #binning Sylvio
+      plot(x, type="l", xlab = assinaturas[i], ylab = "Alerts",
+           cex.main=2, cex.lab=2,cex.axis=2, main = "Time")
+      
+      #binning por freq
+      hist(x, breaks=20, main="frequency", xlab = assinaturas[i], ylab = "Alerts",
+           cex.main=2, cex.lab=2,cex.axis=2)
+      abline(v=discretize(x, method="frequency", categories=4, onlycuts=TRUE), 
+             col="red", labels=c("I1","I2","I3","I4") )
+    }
+  }else{
+    print("NAO pagina final")
+      for(i in aux:(aux+15)){
+      x = assinaturas.signal[i,]
+      #binning Sylvio
+      plot(x, type="l", xlab = assinaturas[i], ylab = "Alerts",
          cex.main=2, cex.lab=2,cex.axis=2, main = "Time")
     
-    #binning por freq
-    hist(x, breaks=20, main="frequency", xlab = assinaturas[i], ylab = "Alerts",
-         cex.main=2, cex.lab=2,cex.axis=2)
-    abline(v=discretize(x, method="frequency", categories=4, onlycuts=TRUE), 
+      #binning por freq
+      hist(x, breaks=20, main="frequency", xlab = assinaturas[i], ylab = "Alerts",
+          cex.main=2, cex.lab=2,cex.axis=2)
+      abline(v=discretize(x, method="frequency", categories=4, onlycuts=TRUE), 
            col="red", labels=c("I1","I2","I3","I4") )
     
+    }
   }
-  dev.off()
-  aux = aux + 8;
+    dev.off()
+    aux = aux + 8;
 }
 
 

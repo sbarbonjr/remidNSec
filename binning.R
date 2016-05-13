@@ -12,3 +12,13 @@ binning = function(x, resolucao){
   }
   return(saida)
 }
+
+ajustarPorTempo = function(x, y, assinaturas.min){
+  comprimento = length(assinaturas.min)
+  saida = vector(length=comprimento)
+  passo = trunc(length(x)/comprimento)
+  for(i in 1:comprimento){
+    saida[i] = sum(x[substr(y$timestamp, start=9, stop=16)==assinaturas.min[i]] )
+  }
+  return(saida)
+}
